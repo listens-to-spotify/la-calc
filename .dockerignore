@@ -1,0 +1,4 @@
+build/
+Desktop-Debug/
+*.pro.user*
+
