@@ -15,50 +15,46 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Clean Qt cache
+    - name: Clean environment
       run: |
-        brew uninstall --ignore-dependencies qt@6 || true
-        rm -rf /usr/local/opt/qt@6
+        brew uninstall --ignore-dependencies qt || true
+        rm -rf /opt/homebrew/opt/qt*
         brew cleanup
 
-    - name: Install Qt with Brew
+    - name: Install Qt
       run: |
         brew update
-        brew install --force qt@6
-        brew link --overwrite qt@6
-        sudo ln -sf /usr/local/opt/qt@6/bin/* /usr/local/bin/
+        brew install qt
+        echo "QT_PATH=/opt/homebrew/opt/qt" >> $GITHUB_ENV
+        echo "PATH=$PATH:/opt/homebrew/opt/qt/bin" >> $GITHUB_ENV
         
-        # Проверяем наличие macdeployqt
-        if [ ! -f /usr/local/opt/qt@6/bin/macdeployqt ]; then
-          echo "❌ macdeployqt not found!"
-          ls -l /usr/local/opt/qt@6/bin
+        # Проверка macdeployqt
+        if [ ! -f /opt/homebrew/opt/qt/bin/macdeployqt ]; then
+          echo "❌ macdeployqt not found at:"
+          find /opt/homebrew -name macdeployqt
           exit 1
         fi
 
     - name: Build application
       run: |
         cd app
-        qmake6 la-calc.pro -spec macx-clang CONFIG+=release
+        /opt/homebrew/opt/qt/bin/qmake la-calc.pro -spec macx-clang CONFIG+=release
         make -j$(sysctl -n hw.ncpu)
         
-        # Проверка бинарника
         if [ ! -f la-calc.app/Contents/MacOS/la-calc ]; then
-            echo "❌ Binary not found!"
-            exit 1
+          echo "❌ Binary not found!"
+          exit 1
         fi
 
-    - name: Prepare distribution
+    - name: Deploy dependencies
       run: |
         mkdir -p dist
         cp -R app/la-calc.app dist/
+        /opt/homebrew/opt/qt/bin/macdeployqt dist/la-calc.app -verbose=3
         
-        # Явный путь к macdeployqt
-        /usr/local/opt/qt@6/bin/macdeployqt dist/la-calc.app -verbose=3
-        
-        # Проверка результата
         if [ ! -d dist/la-calc.app/Contents/Frameworks ]; then
-            echo "❌ Qt frameworks not deployed!"
-            exit 1
+          echo "❌ Frameworks not deployed!"
+          exit 1
         fi
 
     - name: Create DMG
@@ -67,12 +63,6 @@ jobs:
           -volname "Linear Algebra Calculator" \
           -srcfolder dist/la-calc.app \
           -ov -format UDZO dist/la-calc.dmg
-        
-        # Проверка DMG
-        if [ ! -f dist/la-calc.dmg ]; then
-            echo "❌ DMG creation failed!"
-            exit 1
-        fi
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
