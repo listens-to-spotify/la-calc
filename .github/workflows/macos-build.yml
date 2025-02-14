@@ -9,8 +9,13 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-
+      uses: actions/checkout@v4  # Обновите до v4
+   
+     - name: Cache Qt
+        uses: actions/cache@v3
+        with:
+            path: /usr/local/opt/qt@6
+            key: ${{ runner.os }}-qt6
     - name: Install Qt 6
       run: |
         brew install qt@6
@@ -25,7 +30,10 @@ jobs:
         mkdir -p ../dist/la-calc.app/Contents/{MacOS,Resources}
         cp la-calc ../dist/la-calc.app/Contents/MacOS/
         cp ../README.md ../dist/la-calc.app/Contents/Resources/
-
+    - name: Verify binary
+      run: |
+          file dist/la-calc.app/Contents/MacOS/la-calc
+          codesign -dv dist/la-calc.app
     - name: Create DMG package
       run: |
         hdiutil create -volname "Linear Algebra Calculator" \
@@ -33,7 +41,9 @@ jobs:
           -ov -format UDZO dist/la-calc.dmg
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # Обновите до v4
       with:
         name: la-calc-macos
-        path: dist/
+        path: |
+          dist/la-calc.dmg
+          dist/la-calc.app
