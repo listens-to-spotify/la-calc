@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <iostream>
-#include "my_functions.h"
+#include <compatibility.h>
 
 // Default Constructor & Deconstructor
 MainWindow::MainWindow(QWidget *parent)
@@ -10,89 +10,99 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , sleWindow(nullptr)
     , GaussWindow(nullptr)
+    , SymGaussWindow(nullptr)
 {
     ui->setupUi(this);
     clipboard = QApplication::clipboard();
+
     connect(ui->actionSystem_of_Equations, &QAction::triggered, this, &MainWindow::openSleWindow);
     connect(ui->actionGaussian_Elimination, &QAction::triggered, this, &MainWindow::openGaussWindow);
+    connect(ui->actionSymmetric_Gauss, &QAction::triggered, this, &MainWindow::openSymGaussWindow);
+
+    logFile.open(".logs.txt", std::ios::app);
+    if (!logFile.is_open()) {
+        std::cerr << "Failed to open log file!" << std::endl;
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    if (logFile.is_open()) {
+        logFile.close();
+    }
     delete ui;
 }
 
-void MainWindow::openSleWindow() {
+void MainWindow::openSymGaussWindow()
+{
+    if (!SymGaussWindow) {
+        SymGaussWindow = new symmetric_gauss(this);
+    }
+    SymGaussWindow->setClipboard(clipboard);
+    SymGaussWindow->setLogFile(&logFile);
+    SymGaussWindow->show();
+}
+
+void MainWindow::openSleWindow()
+{
     if (!sleWindow) {
         sleWindow = new sle(this);
     }
     sleWindow->setClipboard(clipboard);
+    sleWindow->setLogFile(&logFile);
     sleWindow->show();
 }
 
-void MainWindow::openGaussWindow() {
+void MainWindow::openGaussWindow()
+{
     if (!GaussWindow) {
         GaussWindow = new Gauss(this);
     }
     GaussWindow->setClipboard(clipboard);
+    GaussWindow->setLogFile(&logFile);
     GaussWindow->show();
 }
 
 void MainWindow::on_pushButton_det_A_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
         }
 
-        int swaps = 0;
-        gaussianElimination(M, swaps);
-        Rational result = ((swaps % 2) ? -1 : 1);
-
-        result *= M.diagonal().prod();
-
         ui->textBrowser_result->setPlainText(
-            fromRationalToQString(result)
+            fromRationalToQString(M.det())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_det_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_det_B_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
         }
 
-        int swaps = 0;
-        gaussianElimination(M, swaps);
-        Rational result = ((swaps % 2) ? -1 : 1);
-
-        result *= M.diagonal().prod();
-
         ui->textBrowser_result->setPlainText(
-            fromRationalToQString(result)
-        );
+            fromRationalToQString(M.det())
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_det_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_inverse_A_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -102,15 +112,14 @@ void MainWindow::on_pushButton_inverse_A_clicked()
             fromMatrixToQString(M.inverse())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_inverse_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 void MainWindow::on_pushButton_inverse_B_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -118,26 +127,24 @@ void MainWindow::on_pushButton_inverse_B_clicked()
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.inverse())
-        );
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_inverse_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_rank_A_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Eigen::FullPivLU<Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic>> lu_decomp(M);
-        int rank = lu_decomp.rank();
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+
         ui->textBrowser_result->setPlainText(
-            QString::number(rank)
+            QString::number(M.rank())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_rank_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
@@ -145,175 +152,151 @@ void MainWindow::on_pushButton_rank_A_clicked()
 void MainWindow::on_pushButton_rank_B_clicked()
 {
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
-        Eigen::FullPivLU<Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic>> lu_decomp(M);
-        int rank = lu_decomp.rank();
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+
         ui->textBrowser_result->setPlainText(
-            QString::number(rank)
+            QString::number(M.rank())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_rank_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_transpose_A_clicked() {
+void MainWindow::on_pushButton_transpose_A_clicked()
+{
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.transpose())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_transpose_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_transpose_B_clicked() {
+void MainWindow::on_pushButton_transpose_B_clicked()
+{
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.transpose())
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_transpose_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_power_A_clicked()
 {
-    const unsigned int power = ui->spinBox_power_A->value();
+    unsigned int power = ui->spinBox_power_A->value();
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-
-        if (M.rows() != M.cols()) {
-            throw NotSquareMatrixException();
-        }
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         ui->textBrowser_result->setPlainText(
-            fromMatrixToQString(matrixPower(M, power))
+            fromMatrixToQString(M.pow(power))
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_power_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_power_B_clicked()
 {
-    const unsigned power = ui->spinBox_power_B->value();
+    const unsigned int power = ui->spinBox_power_B->value();
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
-
-        if (M.rows() != M.cols()) {
-            throw NotSquareMatrixException();
-        }
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
-            fromMatrixToQString(matrixPower(M, power))
-        );
+            fromMatrixToQString(M.pow(power))
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_power_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
 void MainWindow::on_pushButton_multiply_A_clicked()
 {
-    const signed int coef = ui->spinBox_multiply_A->value();
+    const auto coef = ui->spinBox_multiply_A->value();
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M * coef)
-            );
+        );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_multiply_A_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 void MainWindow::on_pushButton_multiply_B_clicked()
 {
-    const signed int coef = ui->spinBox_multiply_B->value();
+    const auto coef = ui->spinBox_multiply_B->value();
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
-        M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M * coef)
             );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_multiply_B_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_plus_clicked() {
+void MainWindow::on_pushButton_plus_clicked()
+{
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> A;
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> B;
-        A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
-
-        if (A.rows() != B.rows() || A.cols() != B.cols()) {
-            throw InvalidMatrixSizesException();
-        }
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A + B)
         );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_plus_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_minus_clicked() {
+void MainWindow::on_pushButton_minus_clicked()
+{
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> A;
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> B;
-        A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
-
-        if (A.rows() != B.rows() || A.cols() != B.cols()) {
-            throw InvalidMatrixSizesException();
-        }
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A - B)
-        );
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_minus_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_mult_clicked() {
+void MainWindow::on_pushButton_mult_clicked()
+{
     try {
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> A;
-        Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> B;
-        A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
-
-        if (A.cols() != B.rows()) {
-            throw InvalidMatrixSizesException();
-        }
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A * B)
-        );
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_mult_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
 }
 
-void MainWindow::on_pushButton_switch_clicked() {
+void MainWindow::on_pushButton_switch_clicked()
+{
     const QString left = ui->plainTextEdit_A->toPlainText();
     const QString right = ui->plainTextEdit_B->toPlainText();
 
@@ -341,45 +324,51 @@ void MainWindow::on_pushButton_copy_clicked()
 
 void MainWindow::on_pushButton_copy_tex_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
     try {
-        M = fromQStringToMatrix(ui->textBrowser_result->toPlainText());
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return;
-    }
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->textBrowser_result->toPlainText());
 
-    QString text_to_copy = fromMatrixToQStringTex(M);
-    clipboard->setText(text_to_copy);
+        QString text_to_copy = fromMatrixToQStringTex(M);
+        clipboard->setText(text_to_copy);
+    } catch (const std::exception &e) {
+        logError(e, "on_pushButton_copy_tex_clicked");
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
 }
 
 void MainWindow::on_pushButton_tex_A_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
     try {
-        M = fromQStringToMatrix(clipboard->text());
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return;
-    }
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(clipboard->text());
 
-    ui->plainTextEdit_A->setPlainText(
-        fromMatrixToQString(M)
-    );
+        ui->plainTextEdit_A->setPlainText(
+            fromMatrixToQString(M)
+        );
+    } catch (const std::exception &e) {
+        logError(e, "on_pushButton_tex_A_clicked");
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
 }
 
 void MainWindow::on_pushButton_tex_B_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
     try {
-        M = fromQStringToMatrix(clipboard->text());
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return;
-    }
+        Matrix<Rational<int32_t>> M = fromQStringToMatrix(clipboard->text());
 
-    ui->plainTextEdit_B->setPlainText(
-        fromMatrixToQString(M)
-    );
+        ui->plainTextEdit_B->setPlainText(
+            fromMatrixToQString(M)
+            );
+    } catch (const std::exception &e) {
+        logError(e, "on_pushButton_tex_B_clicked");
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
 }
 
+void MainWindow::logError(const std::exception &e, const QString &context) {
+    if (logFile.is_open()) {
+        QDateTime current = QDateTime::currentDateTime();
+        logFile << "[" << current.toString("yyyy-MM-dd HH:mm:ss").toStdString() << "] :: "
+                << "MainWindow"
+                << "ERROR in " << context.toStdString() << " - "
+                << "Type: " << typeid(e).name() << ", Message: " << e.what() << "\n";
+    }
+}

@@ -3,15 +3,15 @@
 
 #include "sle.h"
 #include "gauss.h"
+#include "symmetric_gauss.h"
 
 #include <QClipboard>
 #include <QMainWindow>
 #include <QApplication>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <Eigen/Dense>
-
-namespace mp = boost::multiprecision;
-using Rational = mp::cpp_rational;
+#include <matrix.h>
+#include <rational.h>
+#include <QDateTime>
+#include <fstream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,9 +29,10 @@ public:
     ~MainWindow();
 
     QClipboard *clipboard;
+    void logError(const std::exception &e, const QString &context);
 
 private slots:
-
+    void openSymGaussWindow();
     void openSleWindow();
     void openGaussWindow();
 
@@ -72,5 +73,8 @@ private:
     Ui::MainWindow *ui;
     sle *sleWindow;
     Gauss *GaussWindow;
+    symmetric_gauss *SymGaussWindow;
+
+    std::ofstream logFile;
 };
 #endif // MAINWINDOW_H

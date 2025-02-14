@@ -271,7 +271,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -330,6 +330,7 @@
      </property>
      <addaction name="actionGaussian_Elimination"/>
      <addaction name="separator"/>
+     <addaction name="actionSymmetric_Gauss"/>
     </widget>
     <addaction name="actionSystem_of_Equations"/>
     <addaction name="menuAlgorithms"/>
@@ -350,6 +351,11 @@
   <action name="actionExp_Gaussian_Elimination">
    <property name="text">
     <string>Exp Gaussian Elimination</string>
+   </property>
+  </action>
+  <action name="actionSymmetric_Gauss">
+   <property name="text">
+    <string>Symmetric Gauss</string>
    </property>
   </action>
  </widget>

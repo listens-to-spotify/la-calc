@@ -2,6 +2,10 @@
 sudo docker build -t la-calc .
 ```
 ```
+xhost +local:root
+```
+
+```
 sudo docker run -it \
     --name qt-container \
     -e QT_QPA_PLATFORM=xcb \

@@ -4,8 +4,10 @@
 #include <QWidget>
 #include <QClipboard>
 #include <QApplication>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <Eigen/Dense>
+#include <matrix.h>
+#include <rational.h>
+#include <QDateTime>
+#include <fstream>
 
 namespace Ui {
 class Gauss;
@@ -19,6 +21,10 @@ public:
     Gauss(QWidget *parent = nullptr);
     ~Gauss();
     void setClipboard(QClipboard *clip) {clipboard = clip;}
+
+    void setLogFile(std::ofstream *log) {logFile = log;}
+    void logError(const std::exception &e, const QString &context);
+
 
 private slots:
 
@@ -34,6 +40,8 @@ private slots:
 private:
     Ui::Gauss *ui;
     QClipboard *clipboard;
+
+    std::ofstream *logFile;
 };
 
 #endif // GAUSS_H

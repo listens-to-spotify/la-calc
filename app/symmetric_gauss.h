@@ -1,5 +1,5 @@
-#ifndef SLE_H
-#define SLE_H
+#ifndef SYMMETRIC_GAUSS_H
+#define SYMMETRIC_GAUSS_H
 
 #include <QWidget>
 #include <QClipboard>
@@ -10,20 +10,21 @@
 #include <fstream>
 
 namespace Ui {
-class sle;
+class symmetric_gauss;
 }
 
-class sle : public QWidget
+class symmetric_gauss : public QWidget
 {
     Q_OBJECT
 
 public:
-    sle(QWidget *parent = nullptr);
-    ~sle();
+    explicit symmetric_gauss(QWidget *parent = nullptr);
+    ~symmetric_gauss();
     void setClipboard(QClipboard *clip) {clipboard = clip;}
     void setLogFile(std::ofstream *log) {logFile = log;}
 
     void logError(const std::exception &e, const QString &context);
+
 
 private slots:
     void on_pushButton_tex_clicked();
@@ -36,13 +37,13 @@ private slots:
     void on_pushButton_copy_b_clicked();
     void on_pushButton_copy_tex_b_clicked();
 
-    void on_pushButoon_copy_tex_Ab_clicked();
+    void on_pushButton_copy_tex_Ab_clicked();
 
 private:
-    Ui::sle *ui;
+    Ui::symmetric_gauss *ui;
     QClipboard *clipboard;
 
     std::ofstream *logFile;
 };
 
-#endif // SLE_H
+#endif // SYMMETRIC_GAUSS_H

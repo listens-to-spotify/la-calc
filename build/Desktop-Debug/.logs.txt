@@ -1,0 +1,9 @@
+[2025-02-14 23:11:37] :: MainWindowERROR in on_pushButton_det_A_clicked - Type: 24NotSquareMatrixException, Message: NotSquareMatrixException
+[2025-02-14 23:11:37] :: MainWindowERROR in on_pushButton_inverse_A_clicked - Type: 24NotSquareMatrixException, Message: NotSquareMatrixException
+[2025-02-14 23:11:38] :: MainWindowERROR in on_pushButton_minus_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:38] :: MainWindowERROR in on_pushButton_minus_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:38] :: MainWindowERROR in on_pushButton_mult_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:39] :: MainWindowERROR in on_pushButton_plus_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:39] :: MainWindowERROR in on_pushButton_plus_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:39] :: MainWindowERROR in on_pushButton_mult_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-14 23:11:40] :: MainWindowERROR in on_pushButton_tex_A_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException

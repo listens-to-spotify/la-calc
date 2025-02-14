@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>sle</class>
- <widget class="QWidget" name="sle">
+ <class>symmetric_gauss</class>
+ <widget class="QWidget" name="symmetric_gauss">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,37 +11,8 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>System of Equations</string>
+   <string>Symmetric Gauss</string>
   </property>
-  <property name="autoFillBackground">
-   <bool>true</bool>
-  </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>20</y>
-     <width>451</width>
-     <height>171</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPlainTextEdit" name="plainTextEdit_A">
-      <property name="placeholderText">
-       <string notr="true">A</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="plainTextEdit_b">
-      <property name="placeholderText">
-       <string notr="true">b</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -74,33 +45,33 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Solve equation</string>
+       <string>Apply</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>91</x>
-     <y>240</y>
+     <x>90</x>
+     <y>20</y>
      <width>451</width>
-     <height>170</height>
+     <height>171</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QTextBrowser" name="textBrowser_result_A">
+     <widget class="QPlainTextEdit" name="plainTextEdit_A">
       <property name="placeholderText">
-       <string notr="true">A'</string>
+       <string notr="true">A</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QTextBrowser" name="textBrowser_result_b">
+     <widget class="QPlainTextEdit" name="plainTextEdit_b">
       <property name="placeholderText">
-       <string>b'</string>
+       <string>C</string>
       </property>
      </widget>
     </item>
@@ -184,6 +155,32 @@
        </widget>
       </item>
      </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_4">
+   <property name="geometry">
+    <rect>
+     <x>91</x>
+     <y>240</y>
+     <width>451</width>
+     <height>170</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QTextBrowser" name="textBrowser_result_A">
+      <property name="placeholderText">
+       <string notr="true">A'</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="textBrowser_result_b">
+      <property name="placeholderText">
+       <string>C'</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

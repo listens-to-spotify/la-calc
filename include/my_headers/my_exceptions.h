@@ -17,6 +17,20 @@ class NotSquareMatrixException : public std::exception
     }
 };
 
+class NotDiagnalMatrixExcception : public std::exception
+{   public:
+    virtual const char* what() const throw() {
+        return "NotDiagnalMatrixExcception";
+    }
+};
+
+class NotInvertibleMatrixException : public std::exception
+{   public:
+    virtual const char* what() const throw() {
+        return "NotInvertibleMatrixException";
+    }
+};
+
 class InvalidMatrixSizesException : public std::exception
 {   public:
     virtual const char* what() const throw() {
@@ -31,10 +45,17 @@ class InvalidArgumentsException : public std::exception
     }
 };
 
-class DifferentRowLengthException : public std::exception
+class NotMultipliableException : public std::exception
 {   public:
     virtual const char* what() const throw() {
-        return "DifferentRowLengthException";
+        return "NotMultipliableException";
+    }
+};
+
+class DifferentSizesException : public std::exception
+{   public:
+    virtual const char* what() const throw() {
+        return "DifferentSizesException";
     }
 };
 

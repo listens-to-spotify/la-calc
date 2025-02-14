@@ -1,4 +1,9 @@
 build/
 Desktop-Debug/
 *.pro.user*
+.git
+*.log
+*.o
+*.tmp
+
 

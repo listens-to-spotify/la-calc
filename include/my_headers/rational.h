@@ -6,7 +6,7 @@
 #include <my_exceptions.h>
 #include <my_functions.h>
 
-template <typename T = int64_t>
+template <typename T = int32_t>
 class Rational {
 private:
     T _num;
@@ -69,10 +69,10 @@ public:
     /*                  PUBLIC METHODS                  */
     /****************************************************/
 
-    T numerator() const {
+    T num() const {
         return _num;
     }
-    T denominator() const {
+    T denom() const {
         return _denom;
     }
 
@@ -177,27 +177,27 @@ public:
     /*                BOOL COMPARISONS                  */
     /****************************************************/
 
-    bool operator==(const Rational& rhs) {
+    bool operator==(const Rational& rhs) const {
         return (_num * rhs._denom == _denom * rhs._num);
     }
 
-    bool operator!=(const Rational& rhs) {
+    bool operator!=(const Rational& rhs) const {
         return !(*this == rhs);
     }
 
-    bool operator>(const Rational& rhs) {
+    bool operator>(const Rational& rhs) const {
         return (_num * rhs._denom > _denom * rhs._num);
     }
 
-    bool operator<(const Rational& rhs) {
+    bool operator<(const Rational& rhs) const {
         return (_num * rhs._denom < _denom * rhs._num);
     }
 
-    bool operator>=(const Rational& rhs) {
+    bool operator>=(const Rational& rhs) const {
         return (_num * rhs._denom >= _denom * rhs._num);
     }
 
-    bool operator<=(const Rational& rhs) {
+    bool operator<=(const Rational& rhs) const {
         return (_num * rhs._denom <= _denom * rhs._num);
     }
 };

@@ -2,7 +2,7 @@
 #include "ui_gauss.h"
 
 #include <iostream>
-#include "my_functions.h"
+#include <compatibility.h>
 
 Gauss::Gauss(QWidget *parent)
     : QWidget(parent)
@@ -19,53 +19,48 @@ Gauss::~Gauss()
 
 void Gauss::on_pushButton_tex_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
     try {
-        M = fromQStringToMatrix(clipboard->text());
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return;
-    }
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(clipboard->text());
 
-    ui->plainTextEdit_A->setPlainText(
-        fromMatrixToQString(M)
-    );
+        ui->plainTextEdit_A->setPlainText(
+            fromMatrixToQString(A)
+        );
+    } catch (const std::exception &e) {
+        logError(e, "on_pushButton_tex_clicked");
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
 }
 
 void Gauss::on_pushButton_ref_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> A;
     try {
-        A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText()); 
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+
+        A.toREF();
+
+        ui->textBrowser_result_A->setPlainText(
+            fromMatrixToQString(A)
+        );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_ref_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
-
-    int x = 0;
-    gaussianElimination(A, x);
-
-    ui->textBrowser_result_A->setPlainText(
-        fromMatrixToQString(A)
-    );
 }
 
 void Gauss::on_pushButton_rref_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> A;
     try {
-        A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+
+        A.toRREF();
+
+        ui->textBrowser_result_A->setPlainText(
+            fromMatrixToQString(A)
+            );
     } catch (const std::exception &e) {
+        logError(e, "on_pushButton_rref_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
-        return;
     }
-
-    int x = 0;
-    ExpandedGaussianElimination(A, x);
-
-    ui->textBrowser_result_A->setPlainText(
-        fromMatrixToQString(A)
-    );
 }
 
 void Gauss::on_pushButton_copy_clicked()
@@ -76,14 +71,23 @@ void Gauss::on_pushButton_copy_clicked()
 
 void Gauss::on_pushButton_copy_tex_clicked()
 {
-    Eigen::Matrix<Rational, Eigen::Dynamic, Eigen::Dynamic> M;
     try {
-        M = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return;
-    }
+        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
 
-    QString text_to_copy = fromMatrixToQStringTex(M);
-    clipboard->setText(text_to_copy);
+        QString text_to_copy = fromMatrixToQStringTex(A);
+        clipboard->setText(text_to_copy);
+    } catch (const std::exception &e) {
+        logError(e, "on_pushButton_copy_tex_clicked");
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+}
+
+void Gauss::logError(const std::exception &e, const QString &context) {
+    if ((*logFile).is_open()) {
+        QDateTime current = QDateTime::currentDateTime();
+        (*logFile) << "[" << current.toString("yyyy-MM-dd HH:mm:ss").toStdString() << "] :: "
+                   << "GaussWindow"
+                   << "ERROR in " << context.toStdString() << " - "
+                   << "Type: " << typeid(e).name() << ", Message: " << e.what() << "\n";
+    }
 }
