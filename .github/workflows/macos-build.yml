@@ -15,39 +15,48 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Cache Qt
-      uses: actions/cache@v3
-      with:
-        path: /usr/local/Cellar/qt@6
-        key: ${{ runner.os }}-qt6-${{ hashFiles('app/la-calc.pro') }}
-
-    - name: Install Qt 6
-      if: steps.Cache.outputs.cache-hit != 'true'
+    - name: Setup Qt
       run: |
-        brew update
-        brew install qt@6 qttools
-        echo "QT_PATH=/usr/local/opt/qt@6" >> $GITHUB_ENV
+        # Установка Qt через официальный установщик
+        wget https://download.qt.io/official_releases/online_installers/qt-unified-macOS-x64-online.run
+        chmod +x qt-unified-macOS-x64-online.run
+        ./qt-unified-macOS-x64-online.run \
+          --script "$GITHUB_WORKSPACE/.github/scripts/qt_install.js" \
+          --no-force-installations \
+          --accept-licenses \
+          --accept-messages
+        
+        echo "QT_PATH=/Users/runner/Qt/6.5.0/macos" >> $GITHUB_ENV
+        echo "PATH=$PATH:/Users/runner/Qt/6.5.0/macos/bin" >> $GITHUB_ENV
 
     - name: Build application
       run: |
         cd app
         qmake6 la-calc.pro -spec macx-clang CONFIG+=release
         make -j$(sysctl -n hw.ncpu)
+        
+        # Проверка бинарника
+        if [ ! -f la-calc.app/Contents/MacOS/la-calc ]; then
+            echo "❌ Error: Binary not found!"
+            exit 1
+        fi
+        
+        # Создание структуры дистрибутива
         mkdir -p ../dist
         cp -R la-calc.app ../dist/
 
     - name: Deploy Qt dependencies
       run: |
-        export PATH="/usr/local/opt/qt@6/bin:$PATH"
-        macdeployqt ../dist/la-calc.app -verbose=3
+        /Users/runner/Qt/6.5.0/macos/bin/macdeployqt ../dist/la-calc.app -verbose=3
 
     - name: Create DMG package
       run: |
         hdiutil create -volname "Linear Algebra Calculator" \
-          -srcfolder dist/la-calc.app \
-          -ov -format UDZO dist/la-calc.dmg
+          -srcfolder ../dist/la-calc.app \
+          -ov -format UDZO ../dist/la-calc.dmg
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name:
+        name: la-calc-macos
+        path: ../dist/la-calc.dmg
