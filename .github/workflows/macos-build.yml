@@ -1,6 +1,10 @@
 name: Build macOS App
 
-on: [push, pull_request]
+on: 
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -9,15 +13,18 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4  # Обновите до v4
-   
-     - name: Cache Qt
-        uses: actions/cache@v3
-        with:
-            path: /usr/local/opt/qt@6
-            key: ${{ runner.os }}-qt6
+      uses: actions/checkout@v4
+
+    - name: Cache Qt installation
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/opt/qt@6
+        key: ${{ runner.os }}-qt6-${{ hashFiles('app/la-calc.pro') }}
+
     - name: Install Qt 6
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
+        brew update
         brew install qt@6
         echo "QT_PATH=/usr/local/opt/qt@6" >> $GITHUB_ENV
         echo "PATH=$PATH:/usr/local/opt/qt@6/bin" >> $GITHUB_ENV
@@ -27,13 +34,16 @@ jobs:
         cd app
         qmake6 la-calc.pro -spec macx-clang CONFIG+=release
         make -j$(sysctl -n hw.ncpu)
+        
         mkdir -p ../dist/la-calc.app/Contents/{MacOS,Resources}
         cp la-calc ../dist/la-calc.app/Contents/MacOS/
         cp ../README.md ../dist/la-calc.app/Contents/Resources/
+
     - name: Verify binary
       run: |
-          file dist/la-calc.app/Contents/MacOS/la-calc
-          codesign -dv dist/la-calc.app
+        file dist/la-calc.app/Contents/MacOS/la-calc
+        codesign -dv --verbose=4 dist/la-calc.app
+
     - name: Create DMG package
       run: |
         hdiutil create -volname "Linear Algebra Calculator" \
@@ -41,9 +51,10 @@ jobs:
           -ov -format UDZO dist/la-calc.dmg
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4  # Обновите до v4
+      uses: actions/upload-artifact@v4
       with:
         name: la-calc-macos
         path: |
           dist/la-calc.dmg
           dist/la-calc.app
+        retention-days: 7
