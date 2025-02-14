@@ -12,45 +12,74 @@ jobs:
     timeout-minutes: 30
 
     steps:
+    # Шаг 1: Получение кода из репозитория
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Cache Qt installation
+    # Шаг 2: Кэширование Qt для ускорения сборок
+    - name: Cache Qt
       uses: actions/cache@v3
       with:
         path: /usr/local/opt/qt@6
         key: ${{ runner.os }}-qt6-${{ hashFiles('app/la-calc.pro') }}
 
+    # Шаг 3: Установка Qt 6 (только при промахе кэша)
     - name: Install Qt 6
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.Cache.outputs.cache-hit != 'true'
       run: |
         brew update
         brew install qt@6
         echo "QT_PATH=/usr/local/opt/qt@6" >> $GITHUB_ENV
         echo "PATH=$PATH:/usr/local/opt/qt@6/bin" >> $GITHUB_ENV
 
+    # Шаг 4: Сборка приложения
     - name: Build application
       run: |
         cd app
+        
+        # Генерация Makefile и сборка
         qmake6 la-calc.pro -spec macx-clang CONFIG+=release
         make -j$(sysctl -n hw.ncpu)
         
-        mkdir -p ../dist/la-calc.app/Contents/{MacOS,Resources}
-        cp la-calc ../dist/la-calc.app/Contents/MacOS/
+        # Проверка существования бинарника
+        if [ ! -f la-calc.app/Contents/MacOS/la-calc ]; then
+            echo "❌ Error: Binary not found!"
+            exit 1
+        fi
+        
+        # Создание структуры дистрибутива
+        mkdir -p ../dist
+        cp -R la-calc.app ../dist/
+
+    # Шаг 5: Развертывание Qt зависимостей
+    - name: Deploy Qt dependencies
+      run: |
+        /usr/local/opt/qt@6/bin/macdeployqt ../dist/la-calc.app -verbose=3
+        
+        # Копирование дополнительных ресурсов
         cp ../README.md ../dist/la-calc.app/Contents/Resources/
 
-    - name: Verify binary
+    # Шаг 6: Проверка результатов
+    - name: Verify build
       run: |
+        # Проверка архитектуры
         file dist/la-calc.app/Contents/MacOS/la-calc
+        
+        # Проверка подписи
         codesign -dv --verbose=4 dist/la-calc.app
+        
+        # Проверка зависимостей
+        otool -L dist/la-calc.app/Contents/MacOS/la-calc
 
+    # Шаг 7: Создание DMG-образа
     - name: Create DMG package
       run: |
         hdiutil create -volname "Linear Algebra Calculator" \
           -srcfolder dist/la-calc.app \
           -ov -format UDZO dist/la-calc.dmg
 
-    - name: Upload artifact
+    # Шаг 8: Загрузка артефактов
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: la-calc-macos
@@ -58,3 +87,14 @@ jobs:
           dist/la-calc.dmg
           dist/la-calc.app
         retention-days: 7
+
+    # Опционально: Автоматическое создание релиза
+    - name: Create Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/la-calc.dmg
+        tag_name: v1.0.0
+        body: "Первая версия калькулятора линейной алгебры для macOS"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
