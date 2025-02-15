@@ -53,17 +53,36 @@ jobs:
       run: |
         mkdir -p dist
         cp -R app/la-calc.app dist/
-        # Принудительное копирование фреймворков
+        
+        # Явная проверка существования приложения
+        if [ ! -d dist/la-calc.app ]; then
+          echo "❌ App bundle not found in dist/"
+          exit 1
+        fi
+        
+        # Принудительное копирование фреймворков с проверкой ошибок
         /opt/homebrew/opt/qt@6/bin/macdeployqt dist/la-calc.app \
           -verbose=3 \
           -always-overwrite \
-          -codesign="-"
+          -codesign="-" || exit 1
+
+    - name: Verify artifacts
+      run: |
+        # Проверка наличия entitlements
+        if [ ! -f ./entitlements.plist ]; then
+          echo "❌ entitlements.plist not found in root directory!"
+          exit 1
+        fi
+        
+        # Проверка структуры приложения
+        ls -lR dist/
 
     - name: Hardened Runtime
       run: |
+        # Включение Hardened Runtime
         codesign --deep --force --verbose \
           --options runtime \
-          --entitlements ./entitlements.plist \  # ← Исправленный путь
+          --entitlements ./entitlements.plist \
           --sign "-" \
           dist/la-calc.app
 
