@@ -726,7 +726,7 @@ public:
             throw NotSquareMatrixException();
         }
 
-        if (!this->isDiag()) {
+        if (!this->isSymmetric()) {
             throw NotDiagnalMatrixExcception();
         }
 
