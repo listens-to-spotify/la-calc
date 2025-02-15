@@ -727,7 +727,11 @@ public:
         }
 
         if (!this->isSymmetric()) {
+<<<<<<< HEAD
             throw NotDiagnalMatrixExcception();
+=======
+            throw NotSymmetricMatrixException();
+>>>>>>> 49d4391 (sym gauss fixed)
         }
 
         size_t n = _m;

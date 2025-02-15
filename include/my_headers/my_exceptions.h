@@ -10,6 +10,13 @@ class EmptyMatrixException : public std::exception
     }
 };
 
+class NotSymmetricMatrixException : public std::exception
+{   public:
+    virtual const char* what() const throw() {
+        return "NotSymmetricMatrixException";
+    }
+};
+
 class NotSquareMatrixException : public std::exception
 {   public:
     virtual const char* what() const throw() {
