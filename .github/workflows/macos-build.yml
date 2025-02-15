@@ -46,16 +46,35 @@ jobs:
           exit 1
         fi
 
-    - name: Deploy dependencies
+    - name: Prepare for deployment
       run: |
         mkdir -p dist
         cp -R app/la-calc.app dist/
-        /opt/homebrew/opt/qt/bin/macdeployqt dist/la-calc.app -verbose=3
+        # Фикс прав доступа
+        chmod -R +x dist/la-calc.app/Contents/MacOS/la-calc
+
+    - name: Deploy dependencies
+      run: |
+        /opt/homebrew/opt/qt/bin/macdeployqt dist/la-calc.app \
+          -verbose=3 \
+          -always-overwrite
+
+    - name: Codesign application
+      run: |
+        # Само-подпись (для теста)
+        codesign --deep --force --verbose --sign "-" dist/la-calc.app
         
+        # Если есть Developer ID:
+        # codesign --deep --force --verbose --sign "Developer ID Application: Your Name (XXXXXXXXXX)" dist/la-calc.app
+
+    - name: Verify bundle
+      run: |
+        # Проверка структуры .app
         if [ ! -d dist/la-calc.app/Contents/Frameworks ]; then
           echo "❌ Frameworks not deployed!"
           exit 1
         fi
+        codesign -dv --verbose=4 dist/la-calc.app
 
     - name: Create DMG
       run: |
