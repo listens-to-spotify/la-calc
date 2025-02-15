@@ -61,10 +61,9 @@ jobs:
 
     - name: Hardened Runtime
       run: |
-        # Включение Hardened Runtime (обязательно для macOS Catalina+)
         codesign --deep --force --verbose \
           --options runtime \
-          --entitlements ./path/to/entitlements.plist \
+          --entitlements ./entitlements.plist \  # ← Исправленный путь
           --sign "-" \
           dist/la-calc.app
 
