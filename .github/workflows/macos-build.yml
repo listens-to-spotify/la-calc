@@ -34,10 +34,12 @@ jobs:
     - name: Deploy Qt libraries
       run: |
         export PATH=$(brew --prefix qt@6)/bin:$PATH
-        macdeployqt ../../dist/la-calc.app \
+        macdeployqt app/build/la-calc.app \
           -verbose=3 \
           -always-overwrite \
           -no-strip
+        mkdir -p ../dist
+        cp -R app/build/la-calc.app ../dist/
 
     # Остальные шаги остаются без изменений
     - name: Verify bundle
