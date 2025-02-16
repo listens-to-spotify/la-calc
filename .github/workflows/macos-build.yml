@@ -13,8 +13,9 @@ jobs:
     - name: Install dependencies
       run: |
         brew update
-        brew install qt@6
-        echo "PATH=$(brew --prefix qt@6)/bin:$PATH" >> $GITHUB_ENV
+        brew install qt@6 jpeg-turbo libtiff webp
+        echo "QT_PATH=$(brew --prefix qt@6)" >> $GITHUB_ENV
+        echo "PATH=$QT_PATH/bin:$PATH" >> $GITHUB_ENV
 
     - name: Prepare build directory
       run: |
@@ -28,47 +29,30 @@ jobs:
       run: |
         cd app/build
         make -j4
-        mkdir -p ../../dist
-        cp -r la-calc.app ../../dist/
 
     - name: Deploy Qt libraries
       run: |
-        export PATH=$(brew --prefix qt@6)/bin:$PATH
+        export QT_PATH=${{ env.QT_PATH }}
         macdeployqt app/build/la-calc.app \
           -verbose=3 \
           -always-overwrite \
-          -no-strip
-        mkdir -p ../dist
-        cp -R app/build/la-calc.app ../dist/
+          -no-strip \
+          -libpath=$QT_PATH/lib \
+          -qmldir=$QT_PATH/qml
 
-    # Остальные шаги остаются без изменений
-    - name: Verify bundle
-      run: |
-        echo "Application structure:"
-        find dist/la-calc.app -print
-        echo "Size:"
-        du -sh dist/la-calc.app
-
-    - name: Code Signing
-      run: |
-        codesign --deep --force --verify --verbose \
-        --sign "-" \
-        dist/la-calc.app
+        # Проверка структуры бандла
+        ls -lR app/build/la-calc.app/Contents/Frameworks
+        du -sh app/build/la-calc.app
 
     - name: Create DMG
-      timeout-minutes: 15
       run: |
-        rm -f dist/la-calc.dmg || true
-        
+        mkdir -p dist
         hdiutil create -fs HFS+ \
           -volname "Linear Algebra Calculator" \
-          -srcfolder dist/la-calc.app \
+          -srcfolder app/build/la-calc.app \
           -format UDZO \
           -ov \
-          -verbose \
           dist/la-calc.dmg
-
-        hdiutil verify dist/la-calc.dmg
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
