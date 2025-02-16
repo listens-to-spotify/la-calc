@@ -25,6 +25,7 @@ jobs:
 
     - name: Build application
       env:
+        MACOSX_DEPRECATED: 1  # Для совместимости
         MACOSX_DEPLOYMENT_TARGET: 11.0
       run: |
         cd app/build
@@ -33,28 +34,4 @@ jobs:
     - name: Deploy Qt libraries
       run: |
         export QT_PATH=${{ env.QT_PATH }}
-        macdeployqt app/build/la-calc.app \
-          -verbose=3 \
-          -always-overwrite \
-          -no-strip \
-          -no-qml \  # Ключевое изменение!
-          -libpath=$QT_PATH/lib
-
-        ls -lR app/build/la-calc.app/Contents/Frameworks
-        du -sh app/build/la-calc.app
-
-    - name: Create DMG
-      run: |
-        mkdir -p dist
-        hdiutil create -fs HFS+ \
-          -volname "Linear Algebra Calculator" \
-          -srcfolder app/build/la-calc.app \
-          -format UDZO \
-          -ov \
-          dist/la-calc.dmg
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: la-calc-macos
-        path: dist/la-calc.dmg
+        macdeployqt app/build
