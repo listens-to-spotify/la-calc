@@ -1,104 +1,81 @@
-name: Build macOS App
-
-on: 
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+name: Build and Package
+on: [push, pull_request]
 
 jobs:
-  build:
+  build-macos:
     runs-on: macos-latest
-    timeout-minutes: 40
-
+    timeout-minutes: 45
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Clean environment
-      run: |
-        brew uninstall --ignore-dependencies qt || true
-        rm -rf /opt/homebrew/opt/qt*
-        brew cleanup
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-    - name: Install Qt
+    - name: Install Homebrew dependencies
       run: |
         brew update
-        brew install qt@6
-        echo "QT_PATH=/opt/homebrew/opt/qt@6" >> $GITHUB_ENV
-        echo "PATH=$PATH:/opt/homebrew/opt/qt@6/bin" >> $GITHUB_ENV
-        
-        # Проверка macdeployqt
-        if [ ! -f /opt/homebrew/opt/qt@6/bin/macdeployqt ]; then
-          echo "❌ macdeployqt not found at:"
-          find /opt/homebrew -name macdeployqt
-          exit 1
-        fi
+        brew install qt@6 libomp
+        brew link --force qt@6
+
+    - name: Configure environment
+      shell: bash
+      run: |
+        echo "QT_PATH=$(brew --prefix qt@6)" >> $GITHUB_ENV
+        echo "$HOME/brew/bin" >> $GITHUB_PATH
 
     - name: Build application
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 11.0
       run: |
-        cd app
-        /opt/homebrew/opt/qt@6/bin/qmake la-calc.pro -spec macx-clang CONFIG+=release
-        make -j$(sysctl -n hw.ncpu)
-        
-        # Проверка бинарника
-        if [ ! -f la-calc.app/Contents/MacOS/la-calc ]; then
-          echo "❌ Binary not found!"
-          exit 1
-        fi
-        # Рекурсивный фикс прав
-        chmod -R 755 la-calc.app
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --config Release --parallel 4
+        mkdir -p ../dist
+        cp -r la-calc.app ../dist/
 
-    - name: Deploy dependencies
+    - name: Deploy Qt libraries
       run: |
-        mkdir -p dist
-        cp -R app/la-calc.app dist/
-        
-        # Явная проверка существования приложения
-        if [ ! -d dist/la-calc.app ]; then
-          echo "❌ App bundle not found in dist/"
-          exit 1
-        fi
-        
-        # Принудительное копирование фреймворков с проверкой ошибок
-        /opt/homebrew/opt/qt@6/bin/macdeployqt dist/la-calc.app \
+        cd dist/la-calc.app/Contents/MacOS
+        /usr/local/opt/qt@6/bin/macdeployqt la-calc.app \
           -verbose=3 \
           -always-overwrite \
-          -codesign="-" || exit 1
+          -no-strip
 
-    - name: Verify artifacts
+    - name: Verify application bundle
       run: |
-        # Проверка наличия entitlements
-        if [ ! -f ./entitlements.plist ]; then
-          echo "❌ entitlements.plist not found in root directory!"
-          exit 1
-        fi
+        echo "Application size:"
+        du -sh dist/la-calc.app
         
-        # Проверка структуры приложения
-        ls -lR dist/
+        echo "Bundle structure:"
+        ls -lR dist/la-calc.app
 
-    - name: Hardened Runtime
+    - name: Create DMG package
+      timeout-minutes: 15
       run: |
-        # Включение Hardened Runtime
-        codesign --deep --force --verbose \
-          --options runtime \
-          --entitlements ./entitlements.plist \
-          --sign "-" \
-          dist/la-calc.app
-
-    - name: Create DMG with permissions
-      run: |
+        # Clean previous artifacts
+        rm -f dist/la-calc.dmg || true
+        
+        # Create disk image with verbose output
         hdiutil create -fs HFS+ \
           -volname "Linear Algebra Calculator" \
           -srcfolder dist/la-calc.app \
-          -ov -format UDZO \
-          -uid 99 \
-          -gid 99 \
-          -mode 755 \
+          -format UDZO \
+          -ov \
+          -verbose \
           dist/la-calc.dmg
 
+        # Verify resulting DMG
+        ls -lh dist/la-calc.dmg
+        hdiutil verify dist/la-calc.dmg
+
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: la-calc-macos
-        path: dist/la-calc.dmg
+        path: |
+          dist/la-calc.dmg
+          dist/la-calc.app
