@@ -13,27 +13,25 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    sle.cpp \
-    gauss.cpp \
-    symmetric_gauss.cpp
+    mainwindow/mainwindow.cpp \
+    sle-window/sle.cpp \
+    gauss-window/gauss.cpp \
+    sym-gauss-window/symmetric_gauss.cpp
 
 HEADERS += \
-    ../include/my_headers/matrix.h \
-    mainwindow.h \
-    sle.h \
-    gauss.h \
     ../include/my_headers/my_functions.h \
     ../include/my_headers/my_exceptions.h \
     ../include/my_headers/rational.h \
-    symmetric_gauss.h
-
+    ../include/my_headers/matrix.h \
+    sle-window/sle.h \
+    gauss-window/gauss.h \
+    sym-gauss-window/symmetric_gauss.h
 
 FORMS += \
-    mainwindow.ui \
-    sle.ui \
-    gauss.ui \
-    symmetric_gauss.ui
+    mainwindow/mainwindow.ui \
+    sle-window/sle.ui \
+    gauss-window/gauss.ui \
+    sym-gauss-window/symmetric_gauss.ui
 
 INCLUDEPATH += ../include/my_headers
 
