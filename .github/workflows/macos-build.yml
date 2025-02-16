@@ -14,13 +14,13 @@ jobs:
       run: |
         brew update
         brew install qt@6
-        brew link --force qt@6
-        echo "QT_BIN_PATH=$(brew --prefix qt@6)/bin" >> $GITHUB_PATH
+        echo "PATH=$(brew --prefix qt@6)/bin:$PATH" >> $GITHUB_ENV
 
     - name: Prepare build directory
       run: |
         mkdir -p app/build
-        cd app && qmake -makefile -spec macx-clang "CONFIG += release" la-calc.pro
+        cd app/build
+        qmake6 -makefile -spec macx-clang "CONFIG += release" ../la-calc.pro
 
     - name: Build application
       env:
@@ -28,25 +28,30 @@ jobs:
       run: |
         cd app/build
         make -j4
-        
-        # Create dist directory
         mkdir -p ../../dist
-        cp -r release/la-calc.app ../../dist/
+        cp -r la-calc.app ../../dist/
 
     - name: Deploy Qt libraries
       run: |
-        $(brew --prefix qt@6)/bin/macdeployqt dist/la-calc.app \
+        export PATH=$(brew --prefix qt@6)/bin:$PATH
+        macdeployqt ../../dist/la-calc.app \
           -verbose=3 \
           -always-overwrite \
-          -no-strip \
-          -qmldir=app
+          -no-strip
 
+    # Остальные шаги остаются без изменений
     - name: Verify bundle
       run: |
         echo "Application structure:"
         find dist/la-calc.app -print
         echo "Size:"
         du -sh dist/la-calc.app
+
+    - name: Code Signing
+      run: |
+        codesign --deep --force --verify --verbose \
+        --sign "-" \
+        dist/la-calc.app
 
     - name: Create DMG
       timeout-minutes: 15
