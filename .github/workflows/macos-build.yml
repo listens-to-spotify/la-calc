@@ -13,7 +13,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew update
-        brew install qt@6 jpeg-turbo libtiff webp
+        brew install qt@6 jpeg-turbo libtiff webp graphite2
         echo "QT_PATH=$(brew --prefix qt@6)" >> $GITHUB_ENV
         echo "PATH=$QT_PATH/bin:$PATH" >> $GITHUB_ENV
 
@@ -37,10 +37,9 @@ jobs:
           -verbose=3 \
           -always-overwrite \
           -no-strip \
-          -libpath=$QT_PATH/lib \
-          -qmldir=$QT_PATH/qml
+          -no-qml \  # Ключевое изменение!
+          -libpath=$QT_PATH/lib
 
-        # Проверка структуры бандла
         ls -lR app/build/la-calc.app/Contents/Frameworks
         du -sh app/build/la-calc.app
 
