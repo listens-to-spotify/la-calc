@@ -14,8 +14,8 @@ jobs:
       run: |
         brew update
         brew install qt@6 jpeg-turbo libtiff webp graphite2
-        echo "QT_PATH=$(brew --prefix qt@6)" >> $GITHUB_ENV
-        echo "PATH=$QT_PATH/bin:$PATH" >> $GITHUB_ENV
+        echo "QT6_PATH=$(brew --prefix qt@6)" >> $GITHUB_ENV
+        echo "PATH=$QT6_PATH/bin:$PATH" >> $GITHUB_ENV
 
     - name: Prepare build directory
       run: |
@@ -25,13 +25,38 @@ jobs:
 
     - name: Build application
       env:
-        MACOSX_DEPRECATED: 1  # Для совместимости
         MACOSX_DEPLOYMENT_TARGET: 11.0
       run: |
         cd app/build
         make -j4
+        # Проверка существования бинарника
+        test -f la-calc.app/Contents/MacOS/la-calc || exit 1
 
     - name: Deploy Qt libraries
       run: |
-        export QT_PATH=${{ env.QT_PATH }}
-        macdeployqt app/build
+        export QT6_PATH=${{ env.QT6_PATH }}
+        macdeployqt app/build/la-calc.app \
+          -verbose=3 \
+          -always-overwrite \
+          -libpath=$QT6_PATH/lib \
+          -executable=app/build/la-calc.app/Contents/MacOS/la-calc
+
+        # Проверка структуры
+        ls -lR app/build/la-calc.app/Contents/Frameworks
+        otool -L app/build/la-calc.app/Contents/MacOS/la-calc
+
+    - name: Create DMG
+      run: |
+        mkdir -p dist
+        hdiutil create -fs HFS+ \
+          -volname "Linear Algebra Calculator" \
+          -srcfolder app/build/la-calc.app \
+          -format UDZO \
+          -ov \
+          dist/la-calc.dmg
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: la-calc-macos
+        path: dist/la-calc.dmg
