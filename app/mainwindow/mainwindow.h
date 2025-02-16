@@ -1,9 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "sle.h"
-#include "gauss.h"
-#include "symmetric_gauss.h"
+#include <sle-window/sle.h>
+#include <gauss-window/gauss.h>
+#include <sym-gauss-window/symmetric_gauss.h>
 
 #include <QClipboard>
 #include <QMainWindow>

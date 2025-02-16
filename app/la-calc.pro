@@ -25,7 +25,8 @@ HEADERS += \
     ../include/my_headers/matrix.h \
     sle-window/sle.h \
     gauss-window/gauss.h \
-    sym-gauss-window/symmetric_gauss.h
+    sym-gauss-window/symmetric_gauss.h \
+    mainwindow/mainwindow.h
 
 FORMS += \
     mainwindow/mainwindow.ui \
