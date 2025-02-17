@@ -6,12 +6,12 @@
 ```
 xcode-select --install
 ```
-Then, in /Applications/Utilities/, run:
+Then run:
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
 ```
 ```
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+sudo echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 source ~/.zshrc
 ```
 Check `brew` version:
