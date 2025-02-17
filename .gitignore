@@ -1,7 +1,7 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
-*logs*
-*.qmake.stash*
+./app/.logs.txt
+*.qmake.stash
 *~
 *.autosave
 *.a
@@ -74,4 +74,4 @@ CMakeLists.txt.user*
 *.exe
 
 # directories 
-build
+./build
