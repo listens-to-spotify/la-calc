@@ -21,7 +21,7 @@ brew --version
 
 2. `qt6`:
 ```
-sudo brew install qt6
+brew install qt6
 ```
 Check `qmake6` verison:
 ```
