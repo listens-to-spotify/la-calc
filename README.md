@@ -2,7 +2,7 @@
 
 ### Installing dependencies
 
-1. `brew`:
+1. `brew` (if not installed):
 ```
 xcode-select --install
 ```
