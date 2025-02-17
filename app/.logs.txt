@@ -1,0 +1,1 @@
+[2025-02-17 12:29:09] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 26NotDiagnalMatrixExcception, Message: NotDiagnalMatrixExcception

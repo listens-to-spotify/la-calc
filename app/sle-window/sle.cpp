@@ -1,4 +1,4 @@
-#include "sle.h"
+#include <sle-window/sle.h>
 #include "ui_sle.h"
 
 #include <iostream>
