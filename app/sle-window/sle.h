@@ -36,7 +36,7 @@ private slots:
     void on_pushButton_copy_b_clicked();
     void on_pushButton_copy_tex_b_clicked();
 
-    void on_pushButoon_copy_tex_Ab_clicked();
+    void on_pushButton_copy_tex_Ab_clicked();
 
 private:
     Ui::sle *ui;

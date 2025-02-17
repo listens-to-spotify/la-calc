@@ -189,6 +189,10 @@ public:
         return std::tuple(_m, _n);
     }
 
+    bool isEmpty() const {
+        return (_m == 0 && _n == 0);
+    }
+
     bool isDiag() const {
         for (size_t i = 0; i < _m; ++i) {
             for (size_t j = 0; j < _n; ++j) {
@@ -215,6 +219,10 @@ public:
     }
 
     bool isSymmetric() const {
+        if (!this->isSquare()) {
+            return false;
+        }
+
         for (size_t i = 0; i < _m; ++i) {
             for (size_t j = 0; j < i; ++j) {
                 if ((*this)(i, j) != (*this)(j, i)) {
@@ -727,7 +735,11 @@ public:
         }
 
         if (!this->isSymmetric()) {
-            throw NotDiagnalMatrixExcception();
+            throw NotSymmetricMatrixException();
+        }
+
+        if (!this->isSameSize(rhs)){
+            throw DifferentSizesException();
         }
 
         size_t n = _m;

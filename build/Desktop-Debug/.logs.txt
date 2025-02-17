@@ -31,3 +31,5 @@
 [2025-02-16 21:47:40] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 26NotDiagnalMatrixExcception, Message: NotDiagnalMatrixExcception
 [2025-02-16 21:47:40] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 26NotDiagnalMatrixExcception, Message: NotDiagnalMatrixExcception
 [2025-02-16 21:47:41] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 26NotDiagnalMatrixExcception, Message: NotDiagnalMatrixExcception
+[2025-02-17 17:18:02] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:18:05] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException

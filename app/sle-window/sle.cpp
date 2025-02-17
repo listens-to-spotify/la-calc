@@ -93,7 +93,7 @@ void sle::on_pushButton_copy_tex_b_clicked()
     }
 }
 
-void sle::on_pushButoon_copy_tex_Ab_clicked()
+void sle::on_pushButton_copy_tex_Ab_clicked()
 {
     try {
         Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());

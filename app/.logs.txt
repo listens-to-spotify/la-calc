@@ -21,3 +21,9 @@
 [2025-02-17 13:23:52] :: sleWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
 [2025-02-17 13:23:52] :: sleWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
 [2025-02-17 13:23:53] :: sleWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 14:36:51] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:13:35] :: SymGaussWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:13:35] :: SymGaussWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:13:36] :: SymGaussWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:13:46] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
+[2025-02-17 17:13:47] :: SymGaussWindowERROR in on_pushButton_solve_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException

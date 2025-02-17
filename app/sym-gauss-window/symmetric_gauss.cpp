@@ -50,16 +50,24 @@ void symmetric_gauss::on_pushButton_solve_clicked()
 {
     try {
         Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Matrix<Rational<int32_t>> b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
+        Matrix<Rational<int32_t>> b;
+        if (ui->plainTextEdit_b->toPlainText().isEmpty()) {
+            b = Identity<Rational<int32_t>>(A.rows());
+            ui->plainTextEdit_b->setPlainText(
+                fromMatrixToQString(b)
+            );
+        } else {
+            b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
+        }
 
         A.symmetricGauss(b);
 
         ui->textBrowser_result_A->setPlainText(
             fromMatrixToQString(A)
-            );
+        );
         ui->textBrowser_result_b->setPlainText(
             fromMatrixToQString(b)
-            );
+        );
     } catch (const std::exception &e) {
         logError(e, "on_pushButton_solve_clicked");
         std::cerr << "Exception: " << e.what() << std::endl;
