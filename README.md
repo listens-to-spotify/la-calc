@@ -52,7 +52,7 @@ Give rights to execute `la-calc.app`:
 chmod a+x la-calc.app
 ```
 
-### Send to Desktop
+### Link `.app` to Desktop
 
 ```
 ln -s la-calc.app ~/Desktop/LA-Calculator
