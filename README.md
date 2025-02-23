@@ -85,3 +85,11 @@ git reset --hard origin/LOCAL_BRANCH_NAME
 ```
 
 Then, rebuild project.
+
+# Interface
+
+![Main Window](pics/mainwindow.png)
+![SLE Window](pics/slewindow.png)
+![Gauss Window](pics/gausswindow.png)
+![Sym Gauss Window](pics/symgausswindow.png)
+
