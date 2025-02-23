@@ -748,24 +748,20 @@ public:
             if ((*this)(i, i) == 0) {
                 size_t pivot_j = n;
                 for (size_t j = i + 1; j < n; ++j) {
-                    if ((*this)(i, j) != 0) {
+                    if ((*this)(i, j) != 0) { // found not null row
                         pivot_j = j;
                         break;
                     }
                 }
-                if (pivot_j < n) {
-                    T half = T(1) / T(2);
-                    __e1_row(i, pivot_j, half);
-                    __e1_col(i, pivot_j, half);
-                    __e1_row(pivot_j, i, -T(1));
-                    __e1_col(pivot_j, i, -T(1));
+                if (pivot_j < n) { // if found not null row -> add it to the i-th row, so pivot elem is not null
+                    __e1_row(i, pivot_j, T(1));
+                    __e1_col(i, pivot_j, T(1));
 
-                    rhs.__e1_row(i, pivot_j, half);
-                    rhs.__e1_row(pivot_j, i, -T(1));
+                    rhs.__e1_row(i, pivot_j, T(1));
                 }
             }
 
-            if ((*this)(i, i) == 0)
+            if ((*this)(i, i) == 0) // this called when now pivot elem found -> whole col is null -> continue
                 continue;
 
             for (size_t j = i + 1; j < n; ++j) {

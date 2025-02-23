@@ -106,7 +106,7 @@ inline QString fromRationalToQStringTeX(Rational<int32_t>&& x) {
         return QString("\\frac{%1}{%2}").arg(QString::number(p)).arg(QString::number(q));
     }
     p *= -1;
-    return QString("\\frac{%1}{%2}").arg(QString::number(p)).arg(QString::number(q));
+    return QString("-\\frac{%1}{%2}").arg(QString::number(p)).arg(QString::number(q));
 }
 
 inline  QString fromMatrixToQStringTex(const Matrix<Rational<int32_t>> &M){
