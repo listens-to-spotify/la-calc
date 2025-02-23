@@ -15,6 +15,7 @@ HEADERS += \
     ../include/my_headers/my_exceptions.h \
     ../include/my_headers/rational.h \
     ../include/my_headers/matrix.h \
+    ../include/my_headers/compatibility.h \
     mainwindow/mainwindow.h \
     sle-window/sle.h \
     gauss-window/gauss.h \

@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionGaussian_Elimination, &QAction::triggered, this, &MainWindow::openGaussWindow);
     connect(ui->actionSymmetric_Gauss, &QAction::triggered, this, &MainWindow::openSymGaussWindow);
 
-    logFile.open(".logs.txt", std::ios::app);
+    logFile.open(".logs.txt", std::ofstream::out | std::ofstream::trunc);
     if (!logFile.is_open()) {
         std::cerr << "Failed to open log file!" << std::endl;
     }
