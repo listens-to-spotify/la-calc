@@ -1,1 +1,0 @@
-[2025-02-23 16:01:35] :: SymGaussWindowERROR in on_pushButton_tex_clicked - Type: 20EmptyMatrixException, Message: EmptyMatrixException
