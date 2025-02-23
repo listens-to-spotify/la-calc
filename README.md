@@ -1,5 +1,23 @@
 ## Install on MacOS
 
+```
+git clone https://github.com/listens-to-spotify/la-calc
+```
+
+## Auto installation
+
+```
+cd la-calc
+```
+```
+bash install-mac.sh
+```
+```
+bash build-mac.sh
+```
+
+## Manual Installation
+
 ### Installing dependencies
 
 1. `brew`:
@@ -28,12 +46,6 @@ Check `qmake6` verison:
 qmake6 --version
 ```
 
-### Clone repository
-
-```
-git clone https://github.com/listens-to-spotify/la-calc
-```
-
 ### Build project
 
 ```
@@ -55,7 +67,7 @@ make clean
 Give rights to execute `la-calc.app`:
 
 ```
-chmod a+x la-calc.app
+chmod a=rwx la-calc.app
 ```
 
 ### Send to Desktop
@@ -68,6 +80,12 @@ Then run `la-calc` from desktop.
 
 # Update version
 
+## Auto-update
+
+Run `bash update-mac.sh`
+
+## Manual update
+
 Force update local repo:
 
 ```
@@ -76,7 +94,7 @@ git remote add https://github.com/listens-to-spotify/la-calc
 
 ```
 git branch
->> *LOCAL_BRANCH_NAME(main expected)
+>> * LOCAL_BRANCH_NAME(main expected)
 ```
 
 ```
