@@ -62,8 +62,10 @@ void symmetric_gauss::on_pushButton_solve_clicked()
         }
         A_mod.symmetricGauss(b);
 
+        Matrix<Rational<int32_t>> A_result = b * A * b.transpose();
+
         ui->textBrowser_result_A->setPlainText(
-            fromMatrixToQString(A_mod)
+            fromMatrixToQString(A_result)
         );
         ui->textBrowser_result_b->setPlainText(
             fromMatrixToQString(b)
