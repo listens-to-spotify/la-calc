@@ -88,8 +88,15 @@ Then, rebuild project.
 
 # Interface
 
+### Main Window
 ![Main Window](pics/mainwindow.png)
+
+### SLE Window
 ![SLE Window](pics/slewindow.png)
+
+### Gauss Window
 ![Gauss Window](pics/gausswindow.png)
+
+### Sym Gauss Window
 ![Sym Gauss Window](pics/symgausswindow.png)
 
