@@ -51,27 +51,25 @@ void symmetric_gauss::on_pushButton_solve_clicked()
     try {
         Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
         Matrix<Rational<int32_t>> b;
-        Matrix<Rational<int32_t>> A_mod = A;
-        Matrix<Rational<int32_t>> b_mod = b;
+        Matrix<Rational<int32_t>> A_mod(A);
         if (ui->plainTextEdit_b->toPlainText().isEmpty()) {
-            b_mod = Identity<Rational<int32_t>>(A.rows());
+            b = Identity<Rational<int32_t>>(A.rows());
             ui->plainTextEdit_b->setPlainText(
-                fromMatrixToQString(b_mod)
+                fromMatrixToQString(b)
             );
         } else {
-            b_mod = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
+            b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
         }
-
-        A_mod.symmetricGauss(b_mod);
+        A_mod.symmetricGauss(b);
 
         ui->textBrowser_result_A->setPlainText(
             fromMatrixToQString(A_mod)
         );
         ui->textBrowser_result_b->setPlainText(
-            fromMatrixToQString(b_mod)
+            fromMatrixToQString(b)
         );
 
-        if (b_mod * A * b_mod.transpose() == A_mod) {
+        if (b * A * b.transpose() == A_mod) {
             ui->textBrowser_is_correct->setPlainText("Correct");
         } else {
             ui->textBrowser_is_correct->setPlainText("Incorrent");

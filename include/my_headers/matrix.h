@@ -107,7 +107,9 @@ public:
     /*               DEFAULT CONSTRUCTORS               */
     /****************************************************/
 
-    Matrix() {}
+    Matrix()
+        : _m(0), _n(0), _matrix(), __det_calculated(false), __det_value(0),
+        __rank_calculated(false), __rank_value(0) {}
 
     Matrix(const size_t n) { // square matrix contructor
         _m = n;
