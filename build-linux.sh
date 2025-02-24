@@ -1,4 +1,4 @@
-chown -R $USER . 
+chown -R $USER:$USER . 
 cd app
 qmake6 la-calc.pro
 make
