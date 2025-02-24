@@ -71,7 +71,9 @@ void symmetric_gauss::on_pushButton_solve_clicked()
             fromMatrixToQString(b)
         );
 
-        if (b * A * b.transpose() == A_mod) {
+        Matrix<Rational<int32_t>> bAbT = b * A * b.transpose();
+
+        if (bAbT == A_mod && bAbT.isDiag()) {
             ui->textBrowser_is_correct->setPlainText("Correct");
         } else {
             ui->textBrowser_is_correct->setPlainText("Incorrent");
