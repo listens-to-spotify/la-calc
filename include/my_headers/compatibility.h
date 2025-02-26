@@ -84,7 +84,7 @@ inline QString fromRationalToQString(Rational<int64_t>&& x) {
     return QString::number(p) + QString("/") + QString::number(q);
 }
 
-inline QString fromMatrixToQString(const Matrix<Rational<int64_t>> &M) {
+inline QString fromMatrixToQString(const Matrix<Rational<int64_t>> &M, const std::string& sep = " ") {
     QString result = "";
 
     for (size_t i = 0; i < M.rows(); ++i) {
@@ -92,7 +92,7 @@ inline QString fromMatrixToQString(const Matrix<Rational<int64_t>> &M) {
         for (size_t j = 0; j < M.cols(); ++j) {
             row += fromRationalToQString(Rational(M(i, j)));
             if (j != M.cols() - 1) {
-                row += " ";
+                row += QString::fromStdString(sep);
             } else {
                 row += "\n";
             }
@@ -149,17 +149,17 @@ inline QString fromHistoryToQString(const history<Matrix<Rational<int64_t>>>& hi
         if (e.type == 1) {
             result += QString("e1_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + ", " + fromRationalToQString(e.factor) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
+            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
         }
         if (e.type == 2) {
             result += QString("e2_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
+            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
         }
         if (e.type == 3) {
             result += QString("e3_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + fromRationalToQString(e.factor) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
+            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
         }
 
         result += "\n";
