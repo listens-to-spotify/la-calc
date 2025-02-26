@@ -731,6 +731,8 @@ public:
     }
 
     Matrix symmetricGauss(Matrix& rhs) {
+        const bool debug = 1;
+
         this->__clear_flags();
         if (!this->isSquare()) {
             throw NotSquareMatrixException();
@@ -757,9 +759,22 @@ public:
                 }
                 if (pivot_j < n) { // if found not null row -> add it to the i-th row, so pivot elem is not null
                     __e1_row(i, pivot_j, T(1));
+
+                    if (debug) {
+                        std::cout << "e1_row(" << i << ", " << pivot_j << ", " << T(1) << "):\n";
+                        std::cout << *this << "\n";
+                    }
+
                     __e1_col(i, pivot_j, T(1));
 
+                    if (debug) {
+                        std::cout << "e1_col(" << i << ", " << pivot_j << ", " << T(1) << "):\n";
+                        std::cout << *this << "\n";
+                        std::cout << "\n";
+                    }
+
                     rhs.__e1_row(i, pivot_j, T(1));
+
                 }
             }
 
@@ -770,7 +785,20 @@ public:
                 T factor = (*this)(j, i) / (*this)(i, i);
                 if (factor != 0) {
                     __e1_row(j, i, -factor);
+
+                    if (debug) {
+                        std::cout << "e1_row(" << j << ", " << i << ", " << -factor << "):\n";
+                        std::cout << *this << "\n";
+                    }
+
                     __e1_col(j, i, -factor);
+
+                    if (debug) {
+                        std::cout << "e1_col(" << j << ", " << i << ", " << -factor << "):\n";
+                        std::cout << *this << "\n";
+                        std::cout << "\n";
+                    }
+
 
                     rhs.__e1_row(j, i, -factor);
                 }

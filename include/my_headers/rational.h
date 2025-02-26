@@ -169,6 +169,10 @@ public:
     /****************************************************/
 
     friend std::ostream& operator<<(std::ostream& os, const Rational& r) {
+        if (r._denom == 1) {
+            os << r._num;
+            return os;
+        }
         os << r._num << "/" << r._denom;
         return os;
     }
