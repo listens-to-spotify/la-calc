@@ -6,7 +6,7 @@
 #include <my_exceptions.h>
 #include <my_functions.h>
 
-template <typename T = int32_t>
+template <typename T = int64_t>
 class Rational {
 private:
     T _num;
@@ -35,6 +35,8 @@ public:
         }
         this->Normalize();
     }
+
+    Rational() = default;
 
     /****************************************************/
     /*                RULE OF FIVE                      */

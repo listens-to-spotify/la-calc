@@ -9,13 +9,14 @@
 #include <rational.h>
 #include <my_exceptions.h>
 #include <my_functions.h>
+#include <e_history.h>
 
 
 template<typename T>
 class Identity;
 
 
-template<typename T = Rational<int32_t>>
+template<typename T = Rational<int64_t>>
 class Matrix {
 private:
     size_t _m; // rows
@@ -68,7 +69,7 @@ private:
         }
     }
 
-    void __toREF(int32_t &swaps) {
+    void __toREF(int64_t &swaps) {
         size_t pivot_row = 0;
         size_t pivot_col = 0;
         while (pivot_row < _m && pivot_col < _n) {
@@ -350,7 +351,7 @@ public:
         }
 
         if (power == 0) {
-            return Identity<Rational<int32_t>>(_n);
+            return Identity<Rational<int64_t>>(_n);
         }
 
         if (power == 1) {
@@ -374,7 +375,7 @@ public:
         Matrix temp = *this;
         temp.toREF();
         size_t null_rows = 0;
-        for (int32_t i = temp.rows() - 1; i >= 0; --i) {
+        for (int64_t i = temp.rows() - 1; i >= 0; --i) {
             bool isNullRow = true;
             for (size_t j = 0; j < temp.cols(); ++j) {
                 if (temp(i, j) != 0) {
@@ -402,7 +403,7 @@ public:
         }
 
         Matrix temp = *this;
-        int32_t swaps = 0;
+        int64_t swaps = 0;
         temp.__toREF(swaps);
         T result = ((swaps % 2) ? -1 : 1);
         for (size_t i = 0; i < temp.cols(); ++i) {
@@ -413,7 +414,7 @@ public:
         return result;
     }
 
-    Matrix joinRight(const Matrix& rhs) {
+    Matrix joinRight(const Matrix& rhs) const {
         if (_m != rhs.rows()) {
             throw DifferentSizesException();
         }
@@ -643,7 +644,7 @@ public:
         this->__clear_flags();
         this->toREF();
 
-        for (int32_t i = _m - 1; i >= 0; i--) {
+        for (int64_t i = _m - 1; i >= 0; i--) {
             size_t pivot_col = 0;
             bool pivot_found = false;
             for (size_t j = 0; j < _n; j++) {
@@ -659,7 +660,7 @@ public:
             T pivot_val = (*this)(i, pivot_col);
             __e3_row(i, T(1) / pivot_val);
 
-            for (int32_t k = i - 1; k >= 0; k--) {
+            for (int64_t k = i - 1; k >= 0; k--) {
                 T factor = (*this)(k, pivot_col);
                 if (factor != 0) {
                     __e1_row(k, i, -factor);
@@ -703,7 +704,7 @@ public:
         this->__clear_flags();
         this->toREF(b);
 
-        for (int32_t i = _m - 1; i >= 0; i--) {
+        for (int64_t i = _m - 1; i >= 0; i--) {
             size_t pivot_col = 0;
             bool pivot_found = false;
             for (size_t j = 0; j < _n; j++) {
@@ -720,7 +721,7 @@ public:
             __e3_row(i, T(1) / pivot_val);
             b.__e3_row(i, T(1) / pivot_val);
 
-            for (int32_t k = i - 1; k >= 0; k--) {
+            for (int64_t k = i - 1; k >= 0; k--) {
                 T factor = (*this)(k, pivot_col);
                 if (factor != 0) {
                     __e1_row(k, i, -factor);
@@ -731,8 +732,6 @@ public:
     }
 
     Matrix symmetricGauss(Matrix& rhs) {
-        const bool debug = 1;
-
         this->__clear_flags();
         if (!this->isSquare()) {
             throw NotSquareMatrixException();
@@ -759,19 +758,7 @@ public:
                 }
                 if (pivot_j < n) { // if found not null row -> add it to the i-th row, so pivot elem is not null
                     __e1_row(i, pivot_j, T(1));
-
-                    if (debug) {
-                        std::cout << "e1_row(" << i << ", " << pivot_j << ", " << T(1) << "):\n";
-                        std::cout << *this << "\n";
-                    }
-
                     __e1_col(i, pivot_j, T(1));
-
-                    if (debug) {
-                        std::cout << "e1_col(" << i << ", " << pivot_j << ", " << T(1) << "):\n";
-                        std::cout << *this << "\n";
-                        std::cout << "\n";
-                    }
 
                     rhs.__e1_row(i, pivot_j, T(1));
 
@@ -785,22 +772,66 @@ public:
                 T factor = (*this)(j, i) / (*this)(i, i);
                 if (factor != 0) {
                     __e1_row(j, i, -factor);
+                    rhs.__e1_row(j, i, -factor);
+                    __e1_col(j, i, -factor);
+                }
+            }
+        }
+        return rhs;
+    }
 
-                    if (debug) {
-                        std::cout << "e1_row(" << j << ", " << i << ", " << -factor << "):\n";
-                        std::cout << *this << "\n";
+    Matrix symmetricGauss(Matrix& rhs, history<Matrix<T>>& h) {
+        this->__clear_flags();
+        if (!this->isSquare()) {
+            throw NotSquareMatrixException();
+        }
+
+        if (!this->isSymmetric()) {
+            throw NotSymmetricMatrixException();
+        }
+
+        if (!this->isSameSize(rhs)){
+            throw DifferentSizesException();
+        }
+
+        size_t n = _m;
+
+        for (size_t i = 0; i < n; ++i) {
+            if ((*this)(i, i) == 0) {
+                size_t pivot_j = n;
+                for (size_t j = i + 1; j < n; ++j) {
+                    if ((*this)(i, j) != 0) { // found not null row
+                        pivot_j = j;
+                        break;
                     }
+                }
+                if (pivot_j < n) { // if found not null row -> add it to the i-th row, so pivot elem is not null
+                    T factor = T(1);
+                    __e1_row(i, pivot_j, factor);
+                    rhs.__e1_row(i, pivot_j, factor);
+                    std::pair<Matrix<T>, Matrix<T>> pair(*this, rhs);
+                    h.emplace_back(et("row", i, pivot_j, factor), pair);
+
+                    __e1_col(i, pivot_j, factor);
+                    pair.first = *this; pair.second = rhs;
+                    h.emplace_back(et("col", i, pivot_j, factor), pair);
+                }
+            }
+
+            if ((*this)(i, i) == 0) // this called when now pivot elem found -> whole col is null -> continue
+                continue;
+
+            for (size_t j = i + 1; j < n; ++j) {
+                T factor = (*this)(j, i) / (*this)(i, i);
+                if (factor != 0) {
+                    __e1_row(j, i, -factor);
+                    rhs.__e1_row(j, i, -factor);
+                    std::pair<Matrix<T>, Matrix<T>> pair(*this, rhs);
+                    h.emplace_back(et("row", j, i, -factor), pair);
 
                     __e1_col(j, i, -factor);
-
-                    if (debug) {
-                        std::cout << "e1_col(" << j << ", " << i << ", " << -factor << "):\n";
-                        std::cout << *this << "\n";
-                        std::cout << "\n";
-                    }
-
-
-                    rhs.__e1_row(j, i, -factor);
+                    pair.first = *this; pair.second =rhs;
+                    h.emplace_back(et("col", j, i, -factor), pair);
                 }
             }
         }
@@ -808,7 +839,8 @@ public:
     }
 };
 
-template<typename T = Rational<int32_t>>
+
+template<typename T = Rational<int64_t>>
 class Identity : public Matrix<T> {
 public:
     Identity(const size_t n) : Matrix<T>(n){

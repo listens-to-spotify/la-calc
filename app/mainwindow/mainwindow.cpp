@@ -66,7 +66,7 @@ void MainWindow::openGaussWindow()
 void MainWindow::on_pushButton_det_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -84,7 +84,7 @@ void MainWindow::on_pushButton_det_A_clicked()
 void MainWindow::on_pushButton_det_B_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -102,7 +102,7 @@ void MainWindow::on_pushButton_det_B_clicked()
 void MainWindow::on_pushButton_inverse_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -119,7 +119,7 @@ void MainWindow::on_pushButton_inverse_A_clicked()
 void MainWindow::on_pushButton_inverse_B_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         if (M.rows() != M.cols()) {
             throw NotSquareMatrixException();
@@ -137,7 +137,7 @@ void MainWindow::on_pushButton_inverse_B_clicked()
 void MainWindow::on_pushButton_rank_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             QString::number(M.rank())
@@ -152,7 +152,7 @@ void MainWindow::on_pushButton_rank_A_clicked()
 void MainWindow::on_pushButton_rank_B_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             QString::number(M.rank())
@@ -166,7 +166,7 @@ void MainWindow::on_pushButton_rank_B_clicked()
 void MainWindow::on_pushButton_transpose_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.transpose())
@@ -180,7 +180,7 @@ void MainWindow::on_pushButton_transpose_A_clicked()
 void MainWindow::on_pushButton_transpose_B_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.transpose())
@@ -195,7 +195,7 @@ void MainWindow::on_pushButton_power_A_clicked()
 {
     unsigned int power = ui->spinBox_power_A->value();
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.pow(power))
@@ -210,7 +210,7 @@ void MainWindow::on_pushButton_power_B_clicked()
 {
     const unsigned int power = ui->spinBox_power_B->value();
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M.pow(power))
@@ -225,7 +225,7 @@ void MainWindow::on_pushButton_multiply_A_clicked()
 {
     const auto coef = ui->spinBox_multiply_A->value();
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M * coef)
@@ -239,7 +239,7 @@ void MainWindow::on_pushButton_multiply_B_clicked()
 {
     const auto coef = ui->spinBox_multiply_B->value();
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(M * coef)
@@ -253,8 +253,8 @@ void MainWindow::on_pushButton_multiply_B_clicked()
 void MainWindow::on_pushButton_plus_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A + B)
@@ -268,8 +268,8 @@ void MainWindow::on_pushButton_plus_clicked()
 void MainWindow::on_pushButton_minus_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A - B)
@@ -283,8 +283,8 @@ void MainWindow::on_pushButton_minus_clicked()
 void MainWindow::on_pushButton_mult_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Matrix<Rational<int32_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> B = fromQStringToMatrix(ui->plainTextEdit_B->toPlainText());
 
         ui->textBrowser_result->setPlainText(
             fromMatrixToQString(A * B)
@@ -325,7 +325,7 @@ void MainWindow::on_pushButton_copy_clicked()
 void MainWindow::on_pushButton_copy_tex_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->textBrowser_result->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->textBrowser_result->toPlainText());
 
         QString text_to_copy = fromMatrixToQStringTex(M);
         clipboard->setText(text_to_copy);
@@ -338,7 +338,7 @@ void MainWindow::on_pushButton_copy_tex_clicked()
 void MainWindow::on_pushButton_tex_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(clipboard->text());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(clipboard->text());
 
         ui->plainTextEdit_A->setPlainText(
             fromMatrixToQString(M)
@@ -352,7 +352,7 @@ void MainWindow::on_pushButton_tex_A_clicked()
 void MainWindow::on_pushButton_tex_B_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(clipboard->text());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(clipboard->text());
 
         ui->plainTextEdit_B->setPlainText(
             fromMatrixToQString(M)
