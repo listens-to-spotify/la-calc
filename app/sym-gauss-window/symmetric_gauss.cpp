@@ -70,6 +70,11 @@ void symmetric_gauss::on_pushButton_solve_clicked()
         } else {
             b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
         }
+
+        if(!A.isSameSize(b)){
+            b = Identity<Rational<int64_t>>(A.rows());
+        }
+
         e_history.clear();
 
         e_history.set_start(std::pair(A, b));
