@@ -59,7 +59,7 @@ inline Matrix<Rational<int64_t>> fromQStringToMatrix(const QString& input) {
                     throw ZeroDivisionException();
                 }
             } else {
-                M(i, j) = Rational(value.toLong());
+                M(i, j) = Rational<int64_t>(value.toLongLong());
             }
         }
     }

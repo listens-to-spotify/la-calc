@@ -17,6 +17,7 @@ HEADERS += \
     ../include/my_headers/rational.h \
     ../include/my_headers/matrix.h \
     ../include/my_headers/compatibility.h \
+    ../include/my_headers/e_history.h \
     et-history-window/et_history_window.h \
     mainwindow/mainwindow.h \
     sle-window/sle.h \
