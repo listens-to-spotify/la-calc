@@ -75,6 +75,11 @@ void symmetric_gauss::on_pushButton_solve_clicked()
         e_history.set_start(std::pair(A, b));
         A_mod.symmetricGauss(b, e_history);
 
+        if (MoreWindow){
+            MoreWindow->setHistory(e_history);
+            MoreWindow->showHistory();
+        }
+
         Matrix<Rational<int64_t>> A_result = b * A * b.transpose();
 
         ui->textBrowser_result_A->setPlainText(

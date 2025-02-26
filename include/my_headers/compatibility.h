@@ -148,17 +148,17 @@ inline QString fromHistoryToQString(const history<Matrix<Rational<int64_t>>>& hi
 
         if (e.type == 1) {
             result += QString("e1_") + QString::fromStdString(e.target) + "(";
-            result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + ", " + fromRationalToQString(e.factor) + ")\n";
+            result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + ", " + fromRationalToQString(e.factor) + "):\n";
             result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
         }
         if (e.type == 2) {
             result += QString("e2_") + QString::fromStdString(e.target) + "(";
-            result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + ")\n";
+            result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + "):\n";
             result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
         }
         if (e.type == 3) {
             result += QString("e3_") + QString::fromStdString(e.target) + "(";
-            result += QString(QString::number(e.i)) + ", " + fromRationalToQString(e.factor) + ")\n";
+            result += QString(QString::number(e.i)) + ", " + fromRationalToQString(e.factor) + "):\n";
             result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second));
         }
 
