@@ -20,7 +20,7 @@ sle::~sle()
 void sle::on_pushButton_tex_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(clipboard->text());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(clipboard->text());
 
         ui->plainTextEdit_A->setPlainText(
             fromMatrixToQString(M.getLeftCols(M.cols() - 1))
@@ -37,8 +37,8 @@ void sle::on_pushButton_tex_clicked()
 void sle::on_pushButton_solve_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
-        Matrix<Rational<int32_t>> b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> b = fromQStringToMatrix(ui->plainTextEdit_b->toPlainText());
 
         A.toRREF(b);
 
@@ -64,7 +64,7 @@ void sle::on_pushButton_copy_A_clicked()
 void sle::on_pushButton_copy_tex_A_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
 
         QString text_to_copy = fromMatrixToQStringTex(M);
         clipboard->setText(text_to_copy);
@@ -83,7 +83,7 @@ void sle::on_pushButton_copy_b_clicked()
 void sle::on_pushButton_copy_tex_b_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> M = fromQStringToMatrix(ui->textBrowser_result_b->toPlainText());
+        Matrix<Rational<int64_t>> M = fromQStringToMatrix(ui->textBrowser_result_b->toPlainText());
 
         QString text_to_copy = fromMatrixToQStringTex(M);
         clipboard->setText(text_to_copy);
@@ -96,8 +96,8 @@ void sle::on_pushButton_copy_tex_b_clicked()
 void sle::on_pushButton_copy_tex_Ab_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
-        Matrix<Rational<int32_t>> b = fromQStringToMatrix(ui->textBrowser_result_b->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
+        Matrix<Rational<int64_t>> b = fromQStringToMatrix(ui->textBrowser_result_b->toPlainText());
 
         QString text_to_copy = fromMatrixToQStringTex(A.joinRight(b));
         clipboard->setText(text_to_copy);

@@ -4,6 +4,7 @@ CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 
 SOURCES += \
+    et-history-window/et_history_window.cpp \
     main.cpp \
     mainwindow/mainwindow.cpp \
     sle-window/sle.cpp \
@@ -16,12 +17,14 @@ HEADERS += \
     ../include/my_headers/rational.h \
     ../include/my_headers/matrix.h \
     ../include/my_headers/compatibility.h \
+    et-history-window/et_history_window.h \
     mainwindow/mainwindow.h \
     sle-window/sle.h \
     gauss-window/gauss.h \
     sym-gauss-window/symmetric_gauss.h
 
 FORMS += \
+    et-history-window/et_history_window.ui \
     mainwindow/mainwindow.ui \
     sle-window/sle.ui \
     gauss-window/gauss.ui \

@@ -20,7 +20,7 @@ Gauss::~Gauss()
 void Gauss::on_pushButton_tex_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(clipboard->text());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(clipboard->text());
 
         ui->plainTextEdit_A->setPlainText(
             fromMatrixToQString(A)
@@ -34,7 +34,7 @@ void Gauss::on_pushButton_tex_clicked()
 void Gauss::on_pushButton_ref_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         A.toREF();
 
@@ -50,7 +50,7 @@ void Gauss::on_pushButton_ref_clicked()
 void Gauss::on_pushButton_rref_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->plainTextEdit_A->toPlainText());
 
         A.toRREF();
 
@@ -72,7 +72,7 @@ void Gauss::on_pushButton_copy_clicked()
 void Gauss::on_pushButton_copy_tex_clicked()
 {
     try {
-        Matrix<Rational<int32_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
+        Matrix<Rational<int64_t>> A = fromQStringToMatrix(ui->textBrowser_result_A->toPlainText());
 
         QString text_to_copy = fromMatrixToQStringTex(A);
         clipboard->setText(text_to_copy);
