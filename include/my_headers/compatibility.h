@@ -103,7 +103,7 @@ inline QString fromMatrixToQString(const Matrix<Rational<int64_t>> &M, const std
     return result;
 }
 
-inline QString fromMatrixesToQString(const Matrix<Rational<int64_t>>& rhs, const Matrix<Rational<int64_t>>& lhs, const std::string& sep="|") {
+inline QString fromMatrixesToQString(const Matrix<Rational<int64_t>>& lhs, const Matrix<Rational<int64_t>>& rhs, const std::string& sep="|") {
     QString result = "";
 
     if (!lhs.isSameSize(rhs)) {
