@@ -40,6 +40,7 @@ void MainWindow::openSymGaussWindow()
     }
     SymGaussWindow->setClipboard(clipboard);
     SymGaussWindow->setLogFile(&logFile);
+    SymGaussWindow->setFixedSize(640, 480);
     SymGaussWindow->show();
 }
 
@@ -50,6 +51,7 @@ void MainWindow::openSleWindow()
     }
     sleWindow->setClipboard(clipboard);
     sleWindow->setLogFile(&logFile);
+    sleWindow->setFixedSize(640, 480);
     sleWindow->show();
 }
 
@@ -60,6 +62,7 @@ void MainWindow::openGaussWindow()
     }
     GaussWindow->setClipboard(clipboard);
     GaussWindow->setLogFile(&logFile);
+    GaussWindow->setFixedSize(640, 480);
     GaussWindow->show();
 }
 
