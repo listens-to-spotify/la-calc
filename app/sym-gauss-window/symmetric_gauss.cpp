@@ -25,6 +25,7 @@ void symmetric_gauss::openMoreWindow(){
     }
     MoreWindow->show();
     MoreWindow->setHistory(e_history);
+    MoreWindow->setFixedSize(875, 480);
 }
 
 void symmetric_gauss::on_pushButton_tex_clicked()

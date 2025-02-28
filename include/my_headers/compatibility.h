@@ -103,6 +103,37 @@ inline QString fromMatrixToQString(const Matrix<Rational<int64_t>> &M, const std
     return result;
 }
 
+inline QString fromMatrixesToQString(const Matrix<Rational<int64_t>>& rhs, const Matrix<Rational<int64_t>>& lhs, const std::string& sep="|") {
+    QString result = "";
+
+    if (!lhs.isSameSize(rhs)) {
+        throw DifferentSizesException();
+    }
+
+    for (size_t i = 0; i < lhs.rows(); ++i){
+        QString row = "";
+        for (size_t j = 0; j < lhs.cols(); ++j) {
+            row += fromRationalToQString(lhs(i, j));
+            if (j == lhs.cols() - 1) {
+                row += "\t" + QString::fromStdString(sep) + "\t";
+            } else {
+                row += "\t";
+            }
+        }
+        for (size_t j = 0; j < rhs.cols(); ++j) {
+            row += fromRationalToQString(rhs(i, j));
+            if (j == lhs.cols() - 1) {
+                row += "\n";
+            } else {
+                row += "\t";
+            }
+        }
+        result += row;
+    }
+
+    return result;
+}
+
 inline QString fromRationalToQStringTeX(Rational<int64_t>&& x) {
     int64_t p = x.num();
     const int64_t q = x.denom();
@@ -140,26 +171,25 @@ inline  QString fromMatrixToQStringTex(const Matrix<Rational<int64_t>> &M){
 inline QString fromHistoryToQString(const history<Matrix<Rational<int64_t>>>& his) {
     QString result = "Start\n";
 
-    result += fromMatrixToQString(
-        his.start.first.joinRight(his.start.second)
-    ) + "\n";
+    result += fromMatrixesToQString(his.start.first, his.start.second) + "\n";
 
     for (const auto& [e, m_pair] : his.h){
 
         if (e.type == 1) {
             result += QString("e1_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + ", " + fromRationalToQString(e.factor) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
+            result += fromMatrixesToQString(m_pair.first, m_pair.second);
+
         }
         if (e.type == 2) {
             result += QString("e2_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + QString::number(e.j) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
+            result += fromMatrixesToQString(m_pair.first, m_pair.second);
         }
         if (e.type == 3) {
             result += QString("e3_") + QString::fromStdString(e.target) + "(";
             result += QString(QString::number(e.i)) + ", " + fromRationalToQString(e.factor) + "):\n";
-            result += fromMatrixToQString(m_pair.first.joinRight(m_pair.second), "\t");
+            result += fromMatrixesToQString(m_pair.first, m_pair.second);
         }
 
         result += "\n";
