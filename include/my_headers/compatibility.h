@@ -11,7 +11,7 @@
 inline Matrix<Rational<int64_t>> fromQStringToMatrix(const QString& input) {
     QStringList input_list = input.split('\n');
     for (auto &s : input_list) {
-        s.remove('&');
+        s.replace("&", " ");
         s.remove('\\');
         s.remove("frac");
         s.replace("}{", "/");
