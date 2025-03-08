@@ -843,7 +843,7 @@ public:
 template<typename T = Rational<int64_t>>
 class Identity : public Matrix<T> {
 public:
-    Identity(const size_t n) : Matrix<T>(n){
+    Identity(const size_t n) : Matrix<T>(n) {
         for (size_t i = 0; i < this->cols(); ++i) {
             (*this)(i, i) = 1;
         }
